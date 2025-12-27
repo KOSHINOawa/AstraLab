@@ -13,7 +13,8 @@
         padding: auto;
         animation-duration: 0.3s;
         animation-name: Background;
-
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
 }
 
 .version {

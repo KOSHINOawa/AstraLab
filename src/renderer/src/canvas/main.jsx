@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import render from './render.js'
 import '../values/ctx_content.js'
-import { addToRender, getRender, removeFromRender } from "../values/ctx_content.js";
+import { addToRender, getRender, removeFromRender,isMouseTouchingAnything} from "../values/ctx_content.js";
 import loadDefault from "../values/ctx_default.jsx";
 import Tab from '../components/tab/tab.jsx'
 import About from '../components/about/about.jsx'
@@ -9,7 +9,8 @@ import About from '../components/about/about.jsx'
 export default function Canvas() {
 
         const canvasRef = useRef(null);
-
+        let MouseX = 0;
+        let MouseY = 0;
         function updateCanvas() {
                 render(canvasRef.current, getRender());
         }
@@ -28,13 +29,17 @@ export default function Canvas() {
                                 height: window.innerHeight
                         });
                 };
-
+                const canvasEnter = () => {
+                        if (isMouseTouchingAnything(MouseX, MouseY)){
+                                console.log(1)
+                        }
+                        
+                }
+                canvasRef.current.addEventListener('mousemove',canvasEnter)
                 window.addEventListener('resize', handleResize);
-                /*
-                事实上这里用这个容易造成非常差劲的优化
-                所以这里仅作测试...
-                */
                 window.addEventListener('mousemove', (event) => {
+                        MouseX = event.clientX;
+                        MouseY = event.clientY;
                         updateCanvas()
                 });
                 window.addEventListener('resize', (event) => {
@@ -45,7 +50,7 @@ export default function Canvas() {
                         window.removeEventListener('resize', handleResize);
                 };
         }, []);
-        const [isShowAbout, changAboutDisplay] = useState(true)
+        const [isShowAbout, changAboutDisplay] = useState(false)
         return (
                 <>
                         <Tab

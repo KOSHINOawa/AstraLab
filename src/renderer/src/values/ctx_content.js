@@ -34,6 +34,33 @@ export function clearRender() {
         notifyListeners();
 }
 
+export function isMouseTouchingAnything(x,y){
+        for (var i = 0; i < content.length; i++) {
+                switch(content[i]['command']){
+                        case 'fill':
+                                if (
+                                        content[i]['x'][0] < x && 
+                                        content[i]['y'][0] < y &&
+                                        content[i]['x'][1] - content[i]['x'][0] > x &&
+                                        content[i]['y'][1] - content[i]['y'][0] > y
+                                ) return true;
+                                break
+                        case 'image':
+                                if(
+                                        content[i]['x'] < x &&
+                                        content[i]['y'] < y &&
+                                        content[i]['x']+content[i]['width'] > x &&
+                                        content[i]['y'] + content[i]['height'] > y
+                                ) return true;
+                                break
+                        // Text 不能检测碰撞，太不规则了
+                }
+                
+        }
+        return false
+}
+
 function notifyListeners() {
         listeners.forEach(callback => callback(content));
 }
+
