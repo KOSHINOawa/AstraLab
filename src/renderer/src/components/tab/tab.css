@@ -8,7 +8,7 @@
         height: 40px;
         background-color: #fefefe99;
         display: flex;
-
+        z-index: 1;
 
 }
 
@@ -27,7 +27,7 @@
         background-color: #22aaff;
 }
 
-.addTest:active {
+.addTest:activee {
         background-color: #0066ff;
 }
 

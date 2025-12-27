@@ -1,0 +1,88 @@
+.about {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        width: 100vw;
+        height: 100vh;
+        background-color: #0099ff99;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-self: center;
+        padding: auto;
+        animation-duration: 0.3s;
+        animation-name: Background;
+
+}
+
+.version {
+        color: #fefefe99;
+        font-weight: 50;
+        font-size: 15px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.aboutLogo {
+        color: #fefefe;
+        width: 100px;
+        height: 100px;
+}
+
+.aboutContent {
+        margin: auto;
+}
+
+.aboutTitle {
+        color: #fefefe;
+        font-weight: 100;
+        font-size: 35px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.authon {
+        color: #fefefe;
+        font-weight: 50;
+        font-size: 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.aboutButton {
+        box-shadow: 0;
+        margin-top: 20px;
+        color: #fefefe;
+        border-width: 2px;
+        border-color: #fefefe55;
+        border-radius: 5px;
+        width: 100px;
+        height: 30px;
+        background-color: #0099ff;
+        outline: none;
+        border-style: solid;
+        transition: all 0.2s ease-in-out;
+}
+
+.aboutButton:hover {
+        background-color: #00aaff;
+        width: 110px;
+        height: 35px;
+        margin-top: 15px;
+}
+
+.aboutButton:active {
+        background-color: #0066ff;
+        width: 90px;
+        height: 25px;
+        margin-top: 25px;
+}
+
+@keyframes Background {
+        from{
+                opacity: 0;
+                margin-top:100
+        }
+        to{
+                opacity: 1;
+                margin-top:0
+        }
+}

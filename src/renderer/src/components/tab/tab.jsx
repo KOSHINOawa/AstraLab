@@ -3,6 +3,7 @@ import './tab.css'
 import '../../values/ctx_content'
 import { addToRender, removeFromRender } from '../../values/ctx_content';
 import logo from '../../image/logo.png'
+
 export default function Tab(props) {
 
         let data = {};
@@ -12,7 +13,6 @@ export default function Tab(props) {
         let Name = Date.now();
         let addContent = {};
         let output = {};
-
 
 
         function mouseDown(event) {
@@ -47,7 +47,8 @@ export default function Tab(props) {
                                 "nowY": nowY
                         };
 
-                        output['text'] = output['text'].replace(/\{(\w+)\}/g, (match, key) => data[key] || match);
+                        output['text'] = output['text'].replace(/\{(\w+)\}/g, (match, key) => data[key] || match); 
+                        //寻找键值并替换
                 }
                 addToRender(
                         output
@@ -69,6 +70,7 @@ export default function Tab(props) {
         /*以下是关于加入的命令*/
 
         function addPos() {
+
                 addContent = {
                         'command': 'text',
                         'text': '{nowX},{nowY}',
@@ -94,7 +96,7 @@ export default function Tab(props) {
         }
         return (
                 <div className='tab'>
-                        <img src={logo} className='logo' />
+                        <img src={logo} className='logo' onClick={props.showAbout} />
                         <button
                                 className='addTest'
                                 title='add Test'
@@ -120,7 +122,9 @@ export default function Tab(props) {
                                                 
                                         >添加</button>
                                 </>
+                                
                         }
+
 
                 </div>
         )

@@ -4,10 +4,10 @@ import '../values/ctx_content.js'
 import { addToRender, getRender, removeFromRender } from "../values/ctx_content.js";
 import loadDefault from "../values/ctx_default.jsx";
 import Tab from '../components/tab/tab.jsx'
-
+import About from '../components/about/about.jsx'
 
 export default function Canvas() {
-        
+
         const canvasRef = useRef(null);
 
         function updateCanvas() {
@@ -19,16 +19,16 @@ export default function Canvas() {
         });
         useEffect(() => {
                 loadDefault();
-        },[]);
+        }, []);
 
         useEffect(() => {
                 const handleResize = () => {
                         setWindowSize({
                                 width: window.innerWidth,
                                 height: window.innerHeight
-                        }); 
+                        });
                 };
-                
+
                 window.addEventListener('resize', handleResize);
                 /*
                 事实上这里用这个容易造成非常差劲的优化
@@ -45,21 +45,24 @@ export default function Canvas() {
                         window.removeEventListener('resize', handleResize);
                 };
         }, []);
-
-        
+        const [isShowAbout, changAboutDisplay] = useState(true)
         return (
                 <>
-                        <Tab 
-                                onUpdateCanvas={updateCanvas} 
+                        <Tab
+                                onUpdateCanvas={updateCanvas}
+                                showAbout={() => { changAboutDisplay(true) }}
                         />
-                        
+                        {isShowAbout ? <About
+                                closeAbout={() => { changAboutDisplay(false) }}
+                        /> : null}
+
                         <canvas className="main" ref={canvasRef} width={windowSize.width} height={windowSize.height} style={{
                                 position: "absolute",
                                 margin: 0,
                                 top: 0,
                                 left: 0,
                                 zIndex: -1
-                        }} 
+                        }}
                         /></>
         );
 }
