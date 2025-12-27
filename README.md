@@ -1,34 +1,11 @@
-# astra-lab
+# AstraLab
 
-An Electron application with React
+![image](resources/icon.png)
 
-## Recommended IDE Setup
+欢迎使用 AstraLab ——化学实验室！
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+此应用依然在制作，敬请期待..
 
-## Project Setup
+# 更新日志
 
-### Install
-
-```bash
-$ npm install
-```
-
-### Development
-
-```bash
-$ npm run dev
-```
-
-### Build
-
-```bash
-# For windows
-$ npm run build:win
-
-# For macOS
-$ npm run build:mac
-
-# For Linux
-$ npm run build:linux
-```
+暂无
