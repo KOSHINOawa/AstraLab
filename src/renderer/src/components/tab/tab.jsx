@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './tab.css'
 import '../../values/ctx_content'
-import { addToRender, removeFromRender } from '../../values/ctx_content';
+import { addToRender, getRender, removeFromRender, replaceRender, setRenderTo } from '../../values/ctx_content';
 import logo from '../../image/logo.png'
 
 export default function Tab(props) {

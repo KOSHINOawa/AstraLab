@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import render from './render.js'
+import render, { getCtx } from './render.js'
 import '../values/ctx_content.js'
 import { addToRender, getRender, removeFromRender,isMouseTouchingAnything} from "../values/ctx_content.js";
 import loadDefault from "../values/ctx_default.jsx";
@@ -30,8 +30,13 @@ export default function Canvas() {
                         });
                 };
                 const canvasEnter = () => {
-                        if (isMouseTouchingAnything(MouseX, MouseY)){
-                                console.log(1)
+                        if (isMouseTouchingAnything(
+                                MouseX, 
+                                MouseY,
+                        )){
+                                canvasRef.current.style.cursor = "pointer"
+                        } else {
+                                canvasRef.current.style.cursor = "default"
                         }
                         
                 }
