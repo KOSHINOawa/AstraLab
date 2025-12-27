@@ -5,6 +5,7 @@ export default function loadDefault(){
         removeFromRender('Test');
         
 
+
         const img = new Image();
         img.src = Logo;
         img.onload = () => {

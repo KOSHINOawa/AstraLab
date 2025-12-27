@@ -11,7 +11,7 @@ export default function renderCanvas(canvas, content) {
         ctx.fillRect(0, 0, width, height);
         
         for(var i=0;i<content.length;i++){
-                console.log("Renderer is Rendering "+content[i])
+               
                 switch(content[i]["command"]){
                         case "fill":
                                 ctx.fillStyle = content[i]["color"];
