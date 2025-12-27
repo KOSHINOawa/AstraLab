@@ -1,4 +1,4 @@
-import Logo from "../image/test.png"
+import Logo from "../image/logo.png"
 import {removeFromRender, addToRender} from '../values/ctx_content.js'
 
 export default function loadDefault(){

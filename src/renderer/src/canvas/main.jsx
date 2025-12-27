@@ -8,7 +8,11 @@ import Tab from '../components/tab/tab.jsx'
 
 export default function Canvas() {
         
+        const canvasRef = useRef(null);
 
+        function updateCanvas() {
+                render(canvasRef.current, getRender());
+        }
         const [windowSize, setWindowSize] = useState({
                 width: window.innerWidth,
                 height: window.innerHeight
@@ -18,28 +22,31 @@ export default function Canvas() {
         },[]);
 
         useEffect(() => {
-                updateCanvas()
                 const handleResize = () => {
                         setWindowSize({
                                 width: window.innerWidth,
                                 height: window.innerHeight
-                        });
-                        
+                        }); 
                 };
-
-                window.addEventListener('resize', handleResize);
                 
+                window.addEventListener('resize', handleResize);
+                /*
+                事实上这里用这个容易造成非常差劲的优化
+                所以这里仅作测试...
+                */
+                window.addEventListener('mousemove', (event) => {
+                        updateCanvas()
+                });
+                window.addEventListener('resize', (event) => {
+                        updateCanvas()
+                });
 
                 return () => {
                         window.removeEventListener('resize', handleResize);
                 };
         }, []);
 
-        const canvasRef = useRef(null);
-
-        function updateCanvas(){
-                render(canvasRef.current, getRender());
-        }
+        
         return (
                 <>
                         <Tab 
