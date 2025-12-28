@@ -3,6 +3,7 @@ import './tab.css'
 import '../../values/ctx_content'
 import { addToRender, getRender, removeFromRender, replaceRender, setRenderTo } from '../../values/ctx_content';
 import logo from '../../image/logo.png'
+import settings from './settings.svg'
 
 export default function Tab(props) {
 
@@ -96,28 +97,28 @@ export default function Tab(props) {
                 InputingText()
         }
         return (
-                <div className='tab'>
-                        <img src={logo} className='logo' onClick={props.showAbout} />
+                <div className='tab-tab'>
+                        <img src={logo} className='tab-logo' onClick={props.showAbout} />
                         <button
-                                className='addTest'
+                                className='tab-addTest'
                                 title='add Test'
                                 onClick={addPos}
                         >添加当前的坐标</button>
                         {!isInputingText ?
                                 <button
-                                        className='addTest'
+                                        className='tab-addTest'
                                         title='add Test'
                                         onClick={InputingText}
                                 >添加自定义文字</button>
                                 :
                                 <>
                                         <input
-                                                className='Tabinput'
+                                                className='tab-Tabinput'
                                                 value={InputedText}
                                                 onChange={e => changeInputedText(e.target.value)}
                                         />
                                         <button
-                                                className='addTest'
+                                                className='tab-addTest'
                                                 title='add Test'
                                                 onClick={addText}
                                         >添加</button>
@@ -125,7 +126,17 @@ export default function Tab(props) {
 
                         }
                         <span>碰到:{!props.touching == false ? props.touching : "棍母"}</span>
+                        <div className='tab-tool'>
+                                <button className='tab-settings-button'
+                                        onClick={props.showSettings}>
+                                        <img
+                                                src={settings}
+                                                width='20px'
+                                                
+                                        />
+                                </button>
 
+                        </div>
                 </div>
         )
 }

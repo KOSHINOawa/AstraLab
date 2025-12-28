@@ -1,5 +1,6 @@
 import {getRender, replaceRender} from "../values/ctx_content"
-
+import '../values/settings'
+import { getSetting } from "../values/settings";
 
 function drawGrid(ctx, width, height) {
         const gridSize = 20; // 网格大小
@@ -76,7 +77,7 @@ export default function renderCanvas(canvas, content) {
         
         for(var i=0;i<content.length;i++){
                 let com = content[i];
-                fillLine(ctx, com)
+                if (getSetting("enable_highLight_box")) fillLine(ctx, com)
                 switch (com["command"]){
                         case "fill":
                                 ctx.fillStyle = com["color"];

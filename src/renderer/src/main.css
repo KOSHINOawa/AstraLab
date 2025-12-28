@@ -1,0 +1,27 @@
+/*定义控件样式*/
+
+button{
+        background-color: #0099ff ;
+        color:#ffffff;
+        border: 0;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+        padding: 4px;
+        min-width: 60px;
+        min-height: 30px;
+        outline: none;
+}
+button:hover {
+        background-color: #22aaff;
+}
+
+button:active {
+        background-color: #0066ff;
+}
+
+input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #0066ff;
+}

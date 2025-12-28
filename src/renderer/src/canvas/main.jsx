@@ -3,8 +3,10 @@ import render, { getCtx } from './render.js'
 import '../values/ctx_content.js'
 import { addToRender, getRender, removeFromRender, isMouseTouchingAnything } from "../values/ctx_content.js";
 import loadDefault from "../values/ctx_default.jsx";
+
 import Tab from '../components/tab/tab.jsx'
 import About from '../components/about/about.jsx'
+import Settings from '../components/settings/settings.jsx'
 
 export default function Canvas() {
         const [isTouchingAnyObject, setTouchingAnyObject] = useState(false);
@@ -60,18 +62,24 @@ export default function Canvas() {
                         window.removeEventListener('resize', handleResize);
                 };
         }, []);
-        const [isShowAbout, changAboutDisplay] = useState(false)
+        const [isShowAbout, changeAboutDisplay] = useState(false)
+        const [isShowSettings, changeSettingsDisplay] = useState(false)
         return (
                 <>
                         <Tab
                                 onUpdateCanvas={updateCanvas}
-                                showAbout={() => { changAboutDisplay(true) }}
+                                showAbout={() => { changeAboutDisplay(true) }}
+                                showSettings={() => { changeSettingsDisplay(true) }}
                                 touching={
                                         isTouchingAnyObject
                                 }
                         />
                         {isShowAbout ? <About
-                                closeAbout={() => { changAboutDisplay(false) }}
+                                closeAbout={() => { changeAboutDisplay(false) }}
+                        /> : null}
+                        {isShowSettings ? <Settings 
+                                closeSettings = {()=>{changeSettingsDisplay(false)}}
+                                update = {updateCanvas}
                         /> : null}
 
                         <canvas className="main" ref={canvasRef} width={windowSize.width} height={windowSize.height} style={{
