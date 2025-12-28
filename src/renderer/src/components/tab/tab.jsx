@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './tab.css'
 import '../../values/ctx_content'
-import { addToRender, getRender, removeFromRender, replaceRender, setRenderTo } from '../../values/ctx_content';
+import { addToRender, getRender, removeFromRender, replaceRender, setRenderTo, getCanvasXY } from '../../values/ctx_content';
 import logo from '../../image/logo.png'
 import settings from './settings.svg'
 
@@ -30,6 +30,8 @@ export default function Tab(props) {
 
                 }
         }
+        const [realX, changeRealX] = useState(0)
+        const [realY, changeRealY] = useState(0)
         function mouseMove(event) {
 
                 removeFromRender(Name);
@@ -38,8 +40,8 @@ export default function Tab(props) {
                 output = JSON.parse(JSON.stringify(addContent));
                 //气死我了为什么直接xx=yy是引用啊
                 output['id'] = Name;
-                output['x'] = nowX;
-                output['y'] = nowY;
+                output['x'] = nowX - getCanvasXY()['x'];
+                output['y'] = nowY - getCanvasXY()['y'];
 
                 if (addContent.hasOwnProperty('text')) {
                         output['text'] = addContent['text'];
@@ -68,6 +70,10 @@ export default function Tab(props) {
 
         }
 
+        addEventListener("mousemove", (e) => {
+                changeRealX(getCanvasXY()['x'] + e.clientX);
+                changeRealY(getCanvasXY()['y'] + e.clientY)
+        })
 
         /*以下是关于加入的命令*/
 
@@ -103,13 +109,13 @@ export default function Tab(props) {
                                 className='tab-addTest'
                                 title='add Test'
                                 onClick={addPos}
-                        >添加当前的坐标</button>
+                        >添加鼠标坐标</button>
                         {!isInputingText ?
                                 <button
                                         className='tab-addTest'
                                         title='add Test'
                                         onClick={InputingText}
-                                >添加自定义文字</button>
+                                >添加注解</button>
                                 :
                                 <>
                                         <input
@@ -125,14 +131,25 @@ export default function Tab(props) {
                                 </>
 
                         }
-                        <span>碰到:{!props.touching == false ? props.touching : "棍母"}</span>
+                        <div style={{
+                                "display": "flex",
+                                "alignItems": "center"
+                        }}>
+                                <div>
+                                        碰到:{!props.touching == false ? props.touching : "棍母"}
+                                </div><br />
+                                <div>
+                                        , 鼠标当前坐标:{realX},{realY}
+                                </div>
+                        </div>
+
                         <div className='tab-tool'>
                                 <button className='tab-settings-button'
                                         onClick={props.showSettings}>
                                         <img
                                                 src={settings}
                                                 width='20px'
-                                                
+
                                         />
                                 </button>
 

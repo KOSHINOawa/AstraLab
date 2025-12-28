@@ -1,4 +1,4 @@
-import {getRender, replaceRender} from "../values/ctx_content"
+import {getRender, replaceRender, getCanvasXY} from "../values/ctx_content"
 import '../values/settings'
 import { getSetting } from "../values/settings";
 
@@ -30,8 +30,8 @@ function fillLine(ctx,content){
                 case 'fill':
                         ctx.strokeStyle = "#00ff00"
                         ctx.strokeRect(
-                                content['x'][0],
-                                content['y'][0],
+                                content['x'][0] + getCanvasXY()['x'],
+                                content['y'][0] + getCanvasXY()['y'],
                                 content['x'][1] - content['x'][0],
                                 content['y'][1] - content['y'][0]
                         )
@@ -39,8 +39,8 @@ function fillLine(ctx,content){
                 case 'image':
                         ctx.strokeStyle = "#00ff00"
                         ctx.strokeRect(
-                                content['x'],
-                                content['y'],
+                                content['x'] + getCanvasXY()['x'],
+                                content['y'] + getCanvasXY()['y'],
                                 content['x'] + content['width'],
                                 content['y'] + content['height']
                         )
@@ -48,8 +48,8 @@ function fillLine(ctx,content){
                 case 'text':
                         ctx.strokeStyle = "#00ff00"
                         ctx.strokeRect(
-                                content['x'],
-                                content['y'],
+                                content['x'] + getCanvasXY()['x'],
+                                content['y'] + getCanvasXY()['y'],
                                 ctx.measureText(content['text']).width,
                                 -50
                         )
@@ -82,8 +82,8 @@ export default function renderCanvas(canvas, content) {
                         case "fill":
                                 ctx.fillStyle = com["color"];
                                 ctx.fillRect(
-                                        com['x'][0], 
-                                        com['y'][0], 
+                                        com['x'][0] + getCanvasXY()['x'], 
+                                        com['y'][0] + getCanvasXY()['y'], 
                                         com['x'][1] - com['x'][0],
                                         com['y'][1] - com['y'][0]
                                 );
@@ -91,19 +91,19 @@ export default function renderCanvas(canvas, content) {
                         case 'image':
                                 ctx.drawImage(
                                         com['image'],
-                                        com['x'],
-                                        com['y'],
+                                        com['x'] + getCanvasXY()['x'],
+                                        com['y'] + getCanvasXY()['y'],
                                         com['width'],
                                         com['height']
                                 );
                                 break;
                         case 'text':
                                 ctx.font = "50px serif";
-                                ctx.fillStyle = "#ffffff";
+                                ctx.fillStyle = com['color'];
                                 ctx.fillText(
                                         com['text'],
-                                        com['x'],
-                                        com['y'],
+                                        com['x'] + getCanvasXY()['x'],
+                                        com['y'] + getCanvasXY()['y'],
                                         com['maxW']
                                 );
                                 textLong["where"] = i;
@@ -112,8 +112,8 @@ export default function renderCanvas(canvas, content) {
                         case 'stroke':
                                 ctx.strokeStyle = com['color']
                                 ctx.strokeRect(
-                                        com['x'],
-                                        com['y'],
+                                        com['x'] + getCanvasXY()['x'],
+                                        com['y'] + getCanvasXY()['y'],
                                         com['width'],
                                         com['height']
                                 );
