@@ -47,7 +47,7 @@ export default function Tab(props) {
                                 "nowY": nowY
                         };
 
-                        output['text'] = output['text'].replace(/\{(\w+)\}/g, (match, key) => data[key] || match); 
+                        output['text'] = output['text'].replace(/\{(\w+)\}/g, (match, key) => data[key] || match);
                         //寻找键值并替换
                 }
                 addToRender(
@@ -67,6 +67,7 @@ export default function Tab(props) {
 
         }
 
+
         /*以下是关于加入的命令*/
 
         function addPos() {
@@ -79,14 +80,14 @@ export default function Tab(props) {
         }
         const [isInputingText, changeInputingText] = useState(false);
         const [InputedText, changeInputedText] = useState("");
-        function InputingText(){
-                if(isInputingText){
+        function InputingText() {
+                if (isInputingText) {
                         changeInputingText(false)
                 } else {
                         changeInputingText(true)
                 }
         }
-        function addText(){
+        function addText() {
                 addContent = {
                         'command': 'text',
                         'text': InputedText,
@@ -110,7 +111,7 @@ export default function Tab(props) {
                                 >添加自定义文字</button>
                                 :
                                 <>
-                                        <input 
+                                        <input
                                                 className='Tabinput'
                                                 value={InputedText}
                                                 onChange={e => changeInputedText(e.target.value)}
@@ -119,12 +120,11 @@ export default function Tab(props) {
                                                 className='addTest'
                                                 title='add Test'
                                                 onClick={addText}
-                                                
                                         >添加</button>
                                 </>
-                                
-                        }
 
+                        }
+                        <span>碰到:{!props.touching == false ? props.touching : "棍母"}</span>
 
                 </div>
         )

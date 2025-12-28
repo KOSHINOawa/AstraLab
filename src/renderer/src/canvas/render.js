@@ -106,7 +106,7 @@ export default function renderCanvas(canvas, content) {
                                         com['maxW']
                                 );
                                 textLong["where"] = i;
-                                textLong["long"] = ctx.measureText(content['text']).width;
+                                textLong["long"] = ctx.measureText(com['text']).width;
                                 break;
                         case 'stroke':
                                 ctx.strokeStyle = com['color']
@@ -115,7 +115,8 @@ export default function renderCanvas(canvas, content) {
                                         com['y'],
                                         com['width'],
                                         com['height']
-                                )
+                                );
+                                break
                 }       
                 
         }

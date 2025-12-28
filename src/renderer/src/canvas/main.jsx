@@ -1,13 +1,13 @@
 import { useRef, useEffect, useState } from "react";
 import render, { getCtx } from './render.js'
 import '../values/ctx_content.js'
-import { addToRender, getRender, removeFromRender,isMouseTouchingAnything} from "../values/ctx_content.js";
+import { addToRender, getRender, removeFromRender, isMouseTouchingAnything } from "../values/ctx_content.js";
 import loadDefault from "../values/ctx_default.jsx";
 import Tab from '../components/tab/tab.jsx'
 import About from '../components/about/about.jsx'
 
 export default function Canvas() {
-
+        const [isTouchingAnyObject, setTouchingAnyObject] = useState(false);
         const canvasRef = useRef(null);
         let MouseX = 0;
         let MouseY = 0;
@@ -30,17 +30,22 @@ export default function Canvas() {
                         });
                 };
                 const canvasEnter = () => {
-                        if (isMouseTouchingAnything(
-                                MouseX, 
-                                MouseY,
-                        )){
+                        setTouchingAnyObject(isMouseTouchingAnything(
+                                MouseX,
+                                MouseY
+                        ))
+                        //直接用isTouchingAnyObject有问题，非常奇怪
+                        if (!isMouseTouchingAnything(
+                                MouseX,
+                                MouseY
+                        ) == false) {
                                 canvasRef.current.style.cursor = "pointer"
                         } else {
                                 canvasRef.current.style.cursor = "default"
                         }
-                        
+
                 }
-                canvasRef.current.addEventListener('mousemove',canvasEnter)
+                canvasRef.current.addEventListener('mousemove', canvasEnter)
                 window.addEventListener('resize', handleResize);
                 window.addEventListener('mousemove', (event) => {
                         MouseX = event.clientX;
@@ -61,6 +66,9 @@ export default function Canvas() {
                         <Tab
                                 onUpdateCanvas={updateCanvas}
                                 showAbout={() => { changAboutDisplay(true) }}
+                                touching={
+                                        isTouchingAnyObject
+                                }
                         />
                         {isShowAbout ? <About
                                 closeAbout={() => { changAboutDisplay(false) }}
