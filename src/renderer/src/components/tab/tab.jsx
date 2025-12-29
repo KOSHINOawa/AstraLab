@@ -140,7 +140,7 @@ export default function Tab(props) {
                                 "alignItems": "center"
                         }}>
                                 <div>
-                                        碰到:{!props.touching == false ? props.touching : "棍母"}
+                                        碰到:{!props.touching() == false ? props.touching() : "棍母"}
                                 </div><br />
                                 <div>
                                         , 鼠标当前坐标:{realX},{realY}
