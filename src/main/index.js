@@ -18,6 +18,7 @@ function createWindow() {
   })
 
   mainWindow.on('ready-to-show', () => {
+    mainWindow.setTitle('AstraLab')
     mainWindow.show()
   })
 
