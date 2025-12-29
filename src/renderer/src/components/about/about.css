@@ -5,7 +5,7 @@
         z-index: 999;
         width: 100vw;
         height: 100vh;
-        background-color: #0099ff99;
+        background-color: #ffffff66;
         text-align: center;
         display: flex;
         flex-direction: column;
@@ -13,8 +13,8 @@
         padding: auto;
         animation-duration: 0.3s;
         animation-name: Background;
-        -webkit-backdrop-filter: blur(5px);
-        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
 }
 
 .version {

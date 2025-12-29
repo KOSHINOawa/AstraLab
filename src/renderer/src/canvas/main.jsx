@@ -9,6 +9,7 @@ import About from '../components/about/about.jsx'
 import Settings from '../components/settings/settings.jsx'
 
 export default function Canvas() {
+        
         const [isTouchingAnyObject, setTouchingAnyObject] = useState(false);
         const canvasRef = useRef(null);
         let MouseX = 0;
@@ -25,8 +26,16 @@ export default function Canvas() {
         });
         useEffect(() => {
                 loadDefault();
+                updateCanvas()
         }, []);
-
+        const [isShowAbout, changeAboutDisplay] = useState(false)
+        const [isShowSettings, changeSettingsDisplay] = useState(false)
+        const [isOpeningUI, setOpenUI] = useState(false)
+        const isOpeningUIRef = useRef(isOpeningUI);
+        useEffect(() => {
+                isOpeningUIRef.current = isOpeningUI;
+                console.log('isOpeningUI updated to:', isOpeningUI);
+        }, [isOpeningUI]);
         useEffect(() => {
                 const handleResize = () => {
                         setWindowSize({
@@ -56,7 +65,7 @@ export default function Canvas() {
                         MouseX = event.clientX;
                         MouseY = event.clientY;
                         updateCanvas()
-                });
+                },20);
 
                 window.addEventListener('resize', (event) => {
                         updateCanvas()
@@ -74,43 +83,47 @@ export default function Canvas() {
                         }
 
                 }
-                window.addEventListener('mousedown', (event) => {
-                        if (isMouseTouchingAnything(MouseX, MouseY) == false){
+                function move_checkMouseUp(){
+                        window.removeEventListener('mousemove', moveCanvas);
+                        window.removeEventListener('mouseup', move_checkMouseUp);
+                }
+                function move_checkMouseDown(){
+                        console.log(isOpeningUI.toString())
+                        if (isMouseTouchingAnything(MouseX, MouseY) == false && !isOpeningUIRef.current) {
                                 o_CanvasX = getCanvasXY()['x'] - MouseX
                                 o_CanvasY = getCanvasXY()['y'] - MouseY
                                 window.addEventListener('mousemove', moveCanvas);
-                                window.addEventListener('mouseup', (event) => {
-                                        window.removeEventListener('mousemove', moveCanvas);
-                                        window.removeEventListener('mouseup', event);
-                                        window.removeEventListener('mousedown', event);
-                                })
-                        } else {
-                                window.removeEventListener('mousedown', event);
+                                window.addEventListener('mouseup', move_checkMouseUp)
                         }
-                })
+                }
+
+                window.addEventListener('mousedown', move_checkMouseDown)
 
                 return () => {
                         window.removeEventListener('resize', handleResize);
                 };
         }, []);
-        const [isShowAbout, changeAboutDisplay] = useState(false)
-        const [isShowSettings, changeSettingsDisplay] = useState(false)
+
         return (
                 <>
                         <Tab
-                                onUpdateCanvas={updateCanvas}
+                                onUpdateCanvas={() => {updateCanvas()}}
                                 showAbout={() => { changeAboutDisplay(true) }}
                                 showSettings={() => { changeSettingsDisplay(true) }}
-                                touching={
+                                touching={() => 
                                         isTouchingAnyObject
                                 }
+                                enableUI={() => { setOpenUI(true) }}
+                                unableUI={() => { setOpenUI(false) }}
                         />
                         {isShowAbout ? <About
                                 closeAbout={() => { changeAboutDisplay(false) }}
+                                unableUI={() => { setOpenUI(false) }}
                         /> : null}
                         {isShowSettings ? <Settings
                                 closeSettings={() => { changeSettingsDisplay(false) }}
-                                update={updateCanvas}
+                                update={() => updateCanvas()}
+                                unableUI={() => { setOpenUI(false) }}
                         /> : null}
 
                         <canvas className="main" ref={canvasRef} width={windowSize.width} height={windowSize.height} style={{

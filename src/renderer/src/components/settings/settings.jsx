@@ -4,8 +4,8 @@ import { useState } from 'react'
 
 export default function Settings(props) {
         const [enableHighLightBox, setEnableHighLightBox] = useState(
-                getSetting("enable_highLight_box") || false
-        );
+                getSetting("enable_highLight_box")
+        )
 
         function handleToggleHighLightBox(e) {
                 const newValue = e.target.checked;
@@ -13,12 +13,16 @@ export default function Settings(props) {
                 setSettingValue("enable_highLight_box", newValue);
                 props.update()
         }
+        const {unableUI} = props;
 
         return (
                 <div className='settings'>
                         <button
                                 className='settings-Button'
-                                onClick={props.closeSettings}
+                                onClick={() => {
+                                        props.closeSettings();
+                                        unableUI()
+                                }}
                         >关闭</button>
                         <span className='settings-Title'>设置</span>
 

@@ -2,7 +2,7 @@ import './about.css'
 import {getVersion} from "../../values/version.js"
 import logo from "../../image/logo.png"
 export default function About(props){
-        
+
         return(
                 <div className='about'>
                         <div className='aboutContent'>
@@ -13,7 +13,10 @@ export default function About(props){
                                         By _KOSHINO_
                                 </span><br />
                                 <button className='aboutButton'
-                                        onClick={props.closeAbout}
+                                        onClick={() => {
+                                                props.unableUI();
+                                                props.closeAbout()
+                                        }}
                                 >确定</button>
                         </div>
                 </div>

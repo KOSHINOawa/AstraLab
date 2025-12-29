@@ -23,7 +23,6 @@ export default function Tab(props) {
         }
         function mouseUp(event) {
                 if (event.button == 0) {
-                        console.log("Done")
                         removeEventListener("mousedown", mouseDown)
                         removeEventListener("mouseup", mouseUp)
                         removeEventListener("mousemove", mouseMove);
@@ -69,11 +68,13 @@ export default function Tab(props) {
                 addEventListener("mousemove", mouseMove);
 
         }
-
-        addEventListener("mousemove", (e) => {
-                changeRealX(getCanvasXY()['x'] + e.clientX);
-                changeRealY(getCanvasXY()['y'] + e.clientY)
-        })
+        useEffect(() => {
+                addEventListener("mousemove", (e) => {
+                        changeRealX(getCanvasXY()['x'] + e.clientX);
+                        changeRealY(getCanvasXY()['y'] + e.clientY)
+                })
+        },[])
+        
 
         /*以下是关于加入的命令*/
 
@@ -104,7 +105,10 @@ export default function Tab(props) {
         }
         return (
                 <div className='tab-tab'>
-                        <img src={logo} className='tab-logo' onClick={props.showAbout} />
+                        <img src={logo} className='tab-logo' onClick={() => {
+                                props.enableUI();
+                                props.showAbout();
+                        }} />
                         <button
                                 className='tab-addTest'
                                 title='add Test'
@@ -145,7 +149,11 @@ export default function Tab(props) {
 
                         <div className='tab-tool'>
                                 <button className='tab-settings-button'
-                                        onClick={props.showSettings}>
+                                        onClick={() => {
+                                                props.enableUI();
+                                                props.showSettings();
+
+                                        }}>
                                         <img
                                                 src={settings}
                                                 width='20px'
