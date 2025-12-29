@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './tab.css'
 import '../../values/ctx_content'
-import { addToRender, getRender, removeFromRender, replaceRender, setRenderTo, getCanvasXY } from '../../values/ctx_content';
+import { addToRender, getRender, removeFromRender, replaceRender, setRenderTo, getCanvasXY, returnSelectObject } from '../../values/ctx_content';
 import logo from '../../image/logo.png'
 import settings from './settings.svg'
 
@@ -139,12 +139,11 @@ export default function Tab(props) {
                                 "display": "flex",
                                 "alignItems": "center"
                         }}>
-                                <div>
-                                        碰到:{!props.touching() == false ? props.touching() : "棍母"}
-                                </div><br />
-                                <div>
+                                
+                                        鼠标碰到:{!props.touching() == false ? props.touching() : "棍母"}
                                         , 鼠标当前坐标:{realX},{realY}
-                                </div>
+                                        ，鼠标选中:{returnSelectObject()["id"]}
+                                
                         </div>
 
                         <div className='tab-tool'>
