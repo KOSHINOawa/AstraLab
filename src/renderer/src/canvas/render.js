@@ -1,4 +1,4 @@
-import {getRender, replaceRender, getCanvasXY} from "../values/ctx_content"
+import {getRender, replaceRender, getCanvasXY, returnCanvasSize} from "../values/ctx_content"
 import '../values/settings'
 import { getSetting } from "../values/settings";
 
@@ -65,15 +65,22 @@ export default function renderCanvas(canvas, content) {
                 "where":0
         };
         const ctx = getCtx(canvas)
+        const scale = returnCanvasSize();
+        
+        ctx.setTransform(1, 0, 0, 1, 0, 0); //重置矩阵(缩放)
+        ctx.scale(scale, scale) 
+
         const { width, height } = canvas;
 
-        ctx.clearRect(0, 0, width, height);
-        
+        const canvasWidth = width / scale;
+        const canvasHeight = height /scale;
+
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
         //绘制背景
         ctx.fillStyle = '#0099ff';
-        ctx.fillRect(0, 0, width, height);
-        drawGrid(ctx, width, height);
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        drawGrid(ctx, canvasWidth, canvasHeight);
         
         for(var i=0;i<content.length;i++){
                 let com = content[i];
@@ -98,7 +105,7 @@ export default function renderCanvas(canvas, content) {
                                 );
                                 break;
                         case 'text':
-                                ctx.font = "50px serif";
+                                ctx.font = "50px Microsoft-YaHei";
                                 ctx.fillStyle = com['color'];
                                 ctx.fillText(
                                         com['text'],
@@ -110,6 +117,7 @@ export default function renderCanvas(canvas, content) {
                                 textLong["long"] = ctx.measureText(com['text']).width;
                                 break;
                         case 'stroke':
+                                ctx.lineWidth = 3;
                                 ctx.strokeStyle = com['color']
                                 ctx.strokeRect(
                                         com['x'] + getCanvasXY()['x'],

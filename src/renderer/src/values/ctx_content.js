@@ -1,6 +1,7 @@
 const content = [];
-const xy = {"x":0,"y":0};
+const xy = { "x": 0, "y": 0 };
 let TouchObject = {};
+let canvasSize = 1;
 /*
 格式
 {
@@ -10,43 +11,49 @@ let TouchObject = {};
 }
 */
 const listeners = new Set(); //监听器
-export function setSelectObject(object){
+export function changeCanvasSizeBy(num) {
+        canvasSize += num;
+}
+export function returnCanvasSize() {
+        return canvasSize;
+}
+export function setSelectObject(object) {
         TouchObject = object
 }
-export function returnSelectObject(){
+export function returnSelectObject() {
         return TouchObject
 }
-export function setCanvasX(x){
+export function setCanvasX(x) {
         xy['x'] = x
 }
-export function setCanvasY(y){
+export function setCanvasY(y) {
         xy['y'] = y
 }
-export function getCanvasXY(){
+export function getCanvasXY() {
         return xy
 }
-export function getRender(){
+export function getRender() {
         return content
 }
 
-export function setRenderTo(data){
+export function setRenderTo(data) {
         content = data;
 }
 
 // 添加到渲染队列
 export function addToRender(data) {
         content.push(data);
-        notifyListeners(); 
+        notifyListeners();
 }
 
-export function replaceRender(where,data){
+export function replaceRender(where, data) {
         content[where] = data
 }
 export function removeFromRender(id) {
 
-        for(var i=0;i<content.length;i++){
-                if(content[i]["id"] == id){
-                        content.splice(i,1)
+        for (var i = 0; i < content.length; i++) {
+                if (content[i]["id"] == id) {
+                        content.splice(i, 1)
                 }
         }
         notifyListeners();
@@ -57,64 +64,68 @@ export function clearRender() {
         notifyListeners();
 }
 
-export function isMouseTouchingAnything(x,y){
-        for (var i = 0; i < content.length; i++) {
-                switch(content[i]['command']){
-                        case 'fill':
-                                if (
-                                        content[i]['x'][0] + xy['x'] < x && 
-                                        content[i]['y'][0] + xy['y'] < y &&
-                                        content[i]['x'][1] + xy['x'] > x &&
-                                        content[i]['y'][1] + xy['y'] > y
-                                ) return content[i]['id'];
-                                break
-                        case 'image':
-                                if(
-                                        content[i]['x'] + xy['x'] < x &&
-                                        content[i]['y'] + xy['y'] < y &&
-                                        content[i]['x'] + content[i]['width'] + xy['x'] > x &&
-                                        content[i]['y'] + content[i]['height'] + xy['y'] > y
-                                ) return content[i]['id'];
-                                break
-                        case 'text':
-                                if(
-                                        content[i]['x'] + xy['x'] < x &&
-                                        content[i]['y'] + xy['y'] - 50 < y &&
-                                        content[i]['x'] + content[i]['pxlong'] + xy['x'] > x &&
-                                        content[i]['y'] + xy['y'] > y
-
-                                ) return content[i]['id'];
-                                break
-                }
-                
-        }
-        return false
-}
-export function mouseTouchObject(x,y){
+export function isMouseTouchingAnything(x, y) {
+        const MouseX = x / returnCanvasSize();
+        const MouseY = y / returnCanvasSize();
         for (var i = 0; i < content.length; i++) {
                 switch (content[i]['command']) {
                         case 'fill':
                                 if (
-                                        content[i]['x'][0] + xy['x'] < x &&
-                                        content[i]['y'][0] + xy['y'] < y &&
-                                        content[i]['x'][1] + xy['x'] > x &&
-                                        content[i]['y'][1] + xy['y'] > y
+                                        content[i]['x'][0] + xy['x'] < MouseX &&
+                                        content[i]['y'][0] + xy['y'] < MouseY &&
+                                        content[i]['x'][1] + xy['x'] > MouseX &&
+                                        content[i]['y'][1] + xy['y'] > MouseY
+                                ) return content[i]['id'];
+                                break
+                        case 'image':
+                                if (
+                                        content[i]['x'] + xy['x'] < MouseX &&
+                                        content[i]['y'] + xy['y'] < MouseY &&
+                                        content[i]['x'] + content[i]['width'] + xy['x'] > MouseX &&
+                                        content[i]['y'] + content[i]['height'] + xy['y'] > MouseY
+                                ) return content[i]['id'];
+                                break
+                        case 'text':
+                                if (
+                                        content[i]['x'] + xy['x'] < MouseX &&
+                                        content[i]['y'] + xy['y'] - 50 < MouseY &&
+                                        content[i]['x'] + content[i]['pxlong'] + xy['x'] > MouseY &&
+                                        content[i]['y'] + xy['y'] > MouseY
+
+                                ) return content[i]['id'];
+                                break
+                }
+
+        }
+        return false
+}
+export function mouseTouchObject(x, y) {
+        const MouseX = x / returnCanvasSize();
+        const MouseY = y / returnCanvasSize();
+        for (var i = 0; i < content.length; i++) {
+                switch (content[i]['command']) {
+                        case 'fill':
+                                if (
+                                        content[i]['x'][0] + xy['x'] < MouseX &&
+                                        content[i]['y'][0] + xy['y'] < MouseY &&
+                                        content[i]['x'][1] + xy['x'] > MouseX &&
+                                        content[i]['y'][1] + xy['y'] > MouseY
                                 ) return content[i];
                                 break
                         case 'image':
                                 if (
-                                        content[i]['x'] + xy['x'] < x &&
-                                        content[i]['y'] + xy['y'] < y &&
-                                        content[i]['x'] + content[i]['width'] + xy['x'] > x &&
-                                        content[i]['y'] + content[i]['height'] + xy['y'] > y
+                                        content[i]['x'] + xy['x'] < MouseX &&
+                                        content[i]['y'] + xy['y'] < MouseY &&
+                                        content[i]['x'] + content[i]['width'] + xy['x'] > MouseX &&
+                                        content[i]['y'] + content[i]['height'] + xy['y'] > MouseY
                                 ) return content[i];
                                 break
                         case 'text':
                                 if (
-                                        content[i]['x'] + xy['x'] < x &&
-                                        content[i]['y'] + xy['y'] - 50 < y &&
-                                        content[i]['x'] + content[i]['pxlong'] + xy['x'] > x &&
-                                        content[i]['y'] + xy['y'] > y
+                                        content[i]['x'] + xy['x'] < MouseX &&
+                                        content[i]['y'] + xy['y'] - 50 < MouseY &&
+                                        content[i]['x'] + content[i]['pxlong'] + xy['x'] > MouseY &&
+                                        content[i]['y'] + xy['y'] > MouseY
 
                                 ) return content[i];
                                 break

@@ -6,6 +6,16 @@ export default function Settings(props) {
         const [enableHighLightBox, setEnableHighLightBox] = useState(
                 getSetting("enable_highLight_box")
         )
+        const [canvasSizeAddValue, setCanvasSizeAddValue] = useState(
+                getSetting("canvas_oncechange_size")
+        )
+
+        function changeCanvasSizeAddValue (e) {
+                const newValue = e.target.value;
+                console.log(newValue)
+                setCanvasSizeAddValue(newValue);
+                setSettingValue("canvas_oncechange_size", newValue);
+        }
 
         function handleToggleHighLightBox(e) {
                 const newValue = e.target.checked;
@@ -27,6 +37,24 @@ export default function Settings(props) {
                         <span className='settings-Title'>设置</span>
 
                         <div className='settings-content'>
+                                <h2 className='settings-content-title'>画布</h2>
+                                <div className='settings-content-tag'>
+                                        <div>
+                                                <span className='settings-content-intro'>
+                                                        画布一次放大的大小
+                                                </span>
+                                                <br />
+                                                <span className='settings-content-intro-min'>
+                                                        设置移动鼠标滚轮时，画布更改尺寸的值(默认为0.001)
+                                                </span>
+                                        </div>
+                                        <div>
+                                                <input
+                                                        defaultValue={canvasSizeAddValue}
+                                                        onChange={changeCanvasSizeAddValue}
+                                                />
+                                        </div>
+                                </div>
                                 <h2 className='settings-content-title'>开发者设置</h2>
                                 <div className='settings-content-tag'>
                                         <div>
@@ -47,6 +75,7 @@ export default function Settings(props) {
                                                 />
                                         </div>
                                 </div>
+
                         </div>
                 </div>
         )

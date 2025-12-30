@@ -1,12 +1,13 @@
 import { useRef, useEffect, useState } from "react";
 import render, { getCtx } from './render.js'
 import '../values/ctx_content.js'
-import { addToRender, getRender, removeFromRender, isMouseTouchingAnything, getCanvasXY, setCanvasX, setCanvasY, mouseTouchObject, setSelectObject } from "../values/ctx_content.js";
+import { addToRender, getRender, removeFromRender, isMouseTouchingAnything, getCanvasXY, setCanvasX, setCanvasY, mouseTouchObject, setSelectObject, changeCanvasSizeBy, returnCanvasSize } from "../values/ctx_content.js";
 import loadDefault from "../values/ctx_default.jsx";
 
 import Tab from '../components/tab/tab.jsx'
 import About from '../components/about/about.jsx'
 import Settings from '../components/settings/settings.jsx'
+import { getSetting } from "../values/settings.jsx";
 
 export default function Canvas() {
 
@@ -71,8 +72,8 @@ export default function Canvas() {
                 });
                 function moveCanvas() {
                         if (isMouseTouchingAnything(MouseX, MouseY) == false) {
-                                const changeX = o_CanvasX + MouseX;
-                                const changeY = o_CanvasY + MouseY
+                                const changeX = (o_CanvasX + MouseX);
+                                const changeY = (o_CanvasY + MouseY)
                                 setCanvasX(changeX);
                                 setCanvasY(changeY);
                                 updateCanvas()
@@ -126,16 +127,28 @@ export default function Canvas() {
                                                                 50 : touchObject['command'] == "fill" ?
                                                                         touchObject['y'][1] - touchObject['y'][0] : touchObject['height']) + 4
                                                         ,
-                                                        "color": "#ff0000"
+                                                        "color": "#33ccff"
                                                 }
                                         )
                                         updateCanvas()
                                 }
                         }
                 }
+                function canvasSize(e) {
+                        console.log(returnCanvasSize())
+                        changeCanvasSizeBy(
+                                e.deltaY * getSetting("canvas_oncechange_size") < 0 ?
+                                        returnCanvasSize() > 0.9 ?
+                                                e.deltaY * getSetting("canvas_oncechange_size") : 0
+                                        : returnCanvasSize() < 4 ?
+                                                e.deltaY * getSetting("canvas_oncechange_size") : 0
 
+                        ) //百分数
+
+                        updateCanvas()
+                }
                 window.addEventListener('mousedown', move_checkMouseDown)
-
+                window.addEventListener('wheel', (e) => canvasSize(e))
                 return () => {
                         window.removeEventListener('resize', handleResize);
                 };
