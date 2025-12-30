@@ -6,4 +6,4 @@
 此应用依然在制作，敬请期待..
 
 
-@import "./Update.md"
+[更新日志](./update.md)
