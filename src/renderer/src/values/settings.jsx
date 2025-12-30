@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 
 if (localStorage.getItem("Settings") == undefined) {
         var settings = {

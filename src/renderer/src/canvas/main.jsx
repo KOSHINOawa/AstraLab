@@ -7,14 +7,18 @@ import loadDefault from "../values/ctx_default.jsx";
 import Tab from '../components/tab/tab.jsx'
 import About from '../components/about/about.jsx'
 import Settings from '../components/settings/settings.jsx'
+import Properties from '../components/properties/properties.jsx'
+import '../components/properties/fix.js'
+
 import { getSetting } from "../values/settings.jsx";
+import { returnFix } from "../components/properties/fix.js";
 
 export default function Canvas() {
 
         const [isTouchingAnyObject, setTouchingAnyObject] = useState(false);
         const canvasRef = useRef(null);
-        let MouseX = 0;
-        let MouseY = 0;
+        const MouseX = useRef(0);
+        const MouseY = useRef(0);
         let o_CanvasX = getCanvasXY()['x'] + MouseX
         let o_CanvasY = getCanvasXY()['y'] + MouseY
 
@@ -45,13 +49,13 @@ export default function Canvas() {
                 };
                 const canvasEnter = () => {
                         setTouchingAnyObject(isMouseTouchingAnything(
-                                MouseX,
-                                MouseY
+                                MouseX.current,
+                                MouseY.current
                         ))
                         //直接用isTouchingAnyObject有问题，非常奇怪
                         if (!isMouseTouchingAnything(
-                                MouseX,
-                                MouseY
+                                MouseX.current,
+                                MouseY.current
                         ) == false) {
                                 canvasRef.current.style.cursor = "pointer"
                         } else {
@@ -62,8 +66,8 @@ export default function Canvas() {
                 canvasRef.current.addEventListener('mousemove', canvasEnter)
                 window.addEventListener('resize', handleResize);
                 window.addEventListener('mousemove', (event) => {
-                        MouseX = event.clientX;
-                        MouseY = event.clientY;
+                        MouseX.current = event.clientX;
+                        MouseY.current = event.clientY;
                         updateCanvas()
                 }, 20);
 
@@ -71,9 +75,9 @@ export default function Canvas() {
                         updateCanvas()
                 });
                 function moveCanvas() {
-                        if (isMouseTouchingAnything(MouseX, MouseY) == false) {
-                                const changeX = (o_CanvasX + MouseX);
-                                const changeY = (o_CanvasY + MouseY)
+                        if (isMouseTouchingAnything(MouseX.current, MouseY.current) == false) {
+                                const changeX = (o_CanvasX + MouseX.current);
+                                const changeY = (o_CanvasY + MouseY.current)
                                 setCanvasX(changeX);
                                 setCanvasY(changeY);
                                 updateCanvas()
@@ -88,14 +92,18 @@ export default function Canvas() {
                         window.removeEventListener('mouseup', move_checkMouseUp);
                 }
                 function move_checkMouseDown() {
-                        if (!isOpeningUIRef.current) {
-                                if (isMouseTouchingAnything(MouseX, MouseY) == false) {
-                                        o_CanvasX = getCanvasXY()['x'] - MouseX
-                                        o_CanvasY = getCanvasXY()['y'] - MouseY
+                        if (isOpeningUIRef.current == false) {
+                                if (isMouseTouchingAnything(MouseX.current, MouseY.current) == false) {
+                                        o_CanvasX = getCanvasXY()['x'] - MouseX.current
+                                        o_CanvasY = getCanvasXY()['y'] - MouseY.current
                                         window.addEventListener('mousemove', moveCanvas);
-                                        window.addEventListener('mouseup', move_checkMouseUp)
-                                } else { //碰到了啥
-                                        const touchObject = mouseTouchObject(MouseX, MouseY);
+                                        window.addEventListener('mouseup', move_checkMouseUp);
+                                        removeFromRender("选中框");
+                                        setSelectObject({});
+                                        updateCanvas()
+                                } else if (!returnFix()) { //碰到了啥
+                                        const touchObject = mouseTouchObject(MouseX.current, MouseY.current);
+                                        console.log(touchObject)
                                         setSelectObject(touchObject);
                                         //上传到ctx_content作为api读取↑
                                         removeFromRender("选中框")
@@ -135,17 +143,18 @@ export default function Canvas() {
                         }
                 }
                 function canvasSize(e) {
-                        console.log(returnCanvasSize())
-                        changeCanvasSizeBy(
-                                e.deltaY * getSetting("canvas_oncechange_size") < 0 ?
-                                        returnCanvasSize() > 0.9 ?
-                                                e.deltaY * getSetting("canvas_oncechange_size") : 0
-                                        : returnCanvasSize() < 4 ?
-                                                e.deltaY * getSetting("canvas_oncechange_size") : 0
+                        if (!isOpeningUIRef.current) {
+                                changeCanvasSizeBy(
+                                        e.deltaY * getSetting("canvas_oncechange_size") < 0 ?
+                                                returnCanvasSize() > 0.9 ?
+                                                        e.deltaY * getSetting("canvas_oncechange_size") : 0
+                                                : returnCanvasSize() < 4 ?
+                                                        e.deltaY * getSetting("canvas_oncechange_size") : 0
 
-                        ) //百分数
+                                ) //百分数
 
-                        updateCanvas()
+                                updateCanvas()
+                        }
                 }
                 window.addEventListener('mousedown', move_checkMouseDown)
                 window.addEventListener('wheel', (e) => canvasSize(e))
@@ -175,7 +184,13 @@ export default function Canvas() {
                                 update={() => updateCanvas()}
                                 unableUI={() => { setOpenUI(false) }}
                         /> : null}
-
+                        <Properties
+                                NowMouseX={() => { return MouseX.current }}
+                                NowMouseY={() => { return MouseY.current }}
+                                enableUI={() => { setOpenUI(true) }}
+                                unableUI={() => { setOpenUI(false) }}
+                                onUpdateCanvas={() => { updateCanvas() }}
+                        />
                         <canvas className="main" ref={canvasRef} width={windowSize.width} height={windowSize.height} style={{
                                 position: "absolute",
                                 margin: 0,

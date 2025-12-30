@@ -105,7 +105,7 @@ export default function renderCanvas(canvas, content) {
                                 );
                                 break;
                         case 'text':
-                                ctx.font = "50px Microsoft-YaHei";
+                                ctx.font = "50px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
                                 ctx.fillStyle = com['color'];
                                 ctx.fillText(
                                         com['text'],

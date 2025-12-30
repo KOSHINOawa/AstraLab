@@ -46,11 +46,17 @@ export function addToRender(data) {
         notifyListeners();
 }
 
+export function whereIsObject(id){
+        for (var i = 0; i < content.length; i++) {
+                if (content[i]["id"] == id) {
+                        return i
+                }
+        }
+}
 export function replaceRender(where, data) {
         content[where] = data
 }
 export function removeFromRender(id) {
-
         for (var i = 0; i < content.length; i++) {
                 if (content[i]["id"] == id) {
                         content.splice(i, 1)
@@ -65,8 +71,8 @@ export function clearRender() {
 }
 
 export function isMouseTouchingAnything(x, y) {
-        const MouseX = x / returnCanvasSize();
-        const MouseY = y / returnCanvasSize();
+        const MouseX = x / canvasSize;
+        const MouseY = y / canvasSize;
         for (var i = 0; i < content.length; i++) {
                 switch (content[i]['command']) {
                         case 'fill':
@@ -86,10 +92,11 @@ export function isMouseTouchingAnything(x, y) {
                                 ) return content[i]['id'];
                                 break
                         case 'text':
+
                                 if (
                                         content[i]['x'] + xy['x'] < MouseX &&
                                         content[i]['y'] + xy['y'] - 50 < MouseY &&
-                                        content[i]['x'] + content[i]['pxlong'] + xy['x'] > MouseY &&
+                                        content[i]['x'] + content[i]['pxlong'] + xy['x'] > MouseX &&
                                         content[i]['y'] + xy['y'] > MouseY
 
                                 ) return content[i]['id'];
@@ -100,8 +107,9 @@ export function isMouseTouchingAnything(x, y) {
         return false
 }
 export function mouseTouchObject(x, y) {
-        const MouseX = x / returnCanvasSize();
-        const MouseY = y / returnCanvasSize();
+        const MouseX = x / canvasSize;
+        const MouseY = y / canvasSize;
+        
         for (var i = 0; i < content.length; i++) {
                 switch (content[i]['command']) {
                         case 'fill':
@@ -124,7 +132,7 @@ export function mouseTouchObject(x, y) {
                                 if (
                                         content[i]['x'] + xy['x'] < MouseX &&
                                         content[i]['y'] + xy['y'] - 50 < MouseY &&
-                                        content[i]['x'] + content[i]['pxlong'] + xy['x'] > MouseY &&
+                                        content[i]['x'] + content[i]['pxlong'] + xy['x'] > MouseX &&
                                         content[i]['y'] + xy['y'] > MouseY
 
                                 ) return content[i];

@@ -25,3 +25,7 @@ input[type="checkbox"] {
         cursor: pointer;
         accent-color: #0066ff;
 }
+:root{
+        overflow: hidden;
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
