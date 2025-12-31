@@ -1,5 +1,5 @@
-const content = [];
-const xy = { "x": 0, "y": 0 };
+let content = [];
+let xy = { "x": 0, "y": 0 };
 let TouchObject = {};
 let canvasSize = 1;
 /*

@@ -16,7 +16,6 @@ export default function Properties(props) {
                 const nowJSON = returnSelectObject();
                 nowJSON['text'] = newText;
                 delete nowJSON.textlong;
-                console.log(nowJSON)
                 replaceRender(whereIsObject(returnSelectObject()['id']), nowJSON)
                 removeFromRender("选中框")
                 props.onUpdateCanvas()
@@ -25,15 +24,14 @@ export default function Properties(props) {
         useEffect(() => {
                 function checkSelect() {
                         const checkValue = returnSelectObject()['id'] == undefined ? -400 : 0
+                        if (checkValue == -400 && props.isEnableProp) return
                         if (returnSelectObject()['canChange'] != false && !fixProp) {
-                                props.enableUI()
-                                if (props.NowMouseX() < window.innerWidth - 400 || rightPosition == -400) {
-                                        props.unableUI()
+                                props.unableProp()
+                                if (props.NowMouseX() < window.innerWidth - 400 || rightPosition == -400) { //Prop关闭的时候
+                                        props.enableProp()
                                         setRightPosition(checkValue);
                                         setSelectObjectProp(returnSelectObject())
                                 }
-
-
                         }
                 };
 

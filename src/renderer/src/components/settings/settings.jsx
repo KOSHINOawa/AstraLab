@@ -12,7 +12,6 @@ export default function Settings(props) {
 
         function changeCanvasSizeAddValue (e) {
                 const newValue = e.target.value;
-                console.log(newValue)
                 setCanvasSizeAddValue(newValue);
                 setSettingValue("canvas_oncechange_size", newValue);
         }
@@ -23,7 +22,7 @@ export default function Settings(props) {
                 setSettingValue("enable_highLight_box", newValue);
                 props.update()
         }
-        const {unableUI} = props;
+        
 
         return (
                 <div className='settings'>
@@ -31,7 +30,7 @@ export default function Settings(props) {
                                 className='settings-Button'
                                 onClick={() => {
                                         props.closeSettings();
-                                        unableUI()
+                                        props.unableUI()
                                 }}
                         >关闭</button>
                         <span className='settings-Title'>设置</span>

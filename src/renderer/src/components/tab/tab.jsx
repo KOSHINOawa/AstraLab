@@ -1,165 +1,151 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './tab.css'
-import '../../values/ctx_content'
-import { addToRender, getRender, removeFromRender, replaceRender, setRenderTo, getCanvasXY, returnSelectObject } from '../../values/ctx_content';
+import {
+        addToRender,
+        removeFromRender,
+        getCanvasXY,
+        returnSelectObject
+} from '../../values/ctx_content'
+
 import logo from '../../image/logo.png'
 import settings from './settings.svg'
 
 export default function Tab(props) {
 
-        let data = {};
-        let nowX = 0;
-        let nowY = 0;
-        let MouseDown = false;
-        let Name = Date.now();
-        let addContent = {};
-        let output = {};
+        const isAddingRef = useRef(false)
+        const nameRef = useRef(0)
+        const addContentRef = useRef(null)
 
 
-        function mouseDown(event) {
-                if (event.button == 0) {
-                        MouseDown = true
-                }
-        }
-        function mouseUp(event) {
-                if (event.button == 0) {
-                        removeEventListener("mousedown", mouseDown)
-                        removeEventListener("mouseup", mouseUp)
-                        removeEventListener("mousemove", mouseMove);
+        const [mouseX, setMouseX] = useState(0)
+        const [mouseY, setMouseY] = useState(0)
+        const [isInputingText, setIsInputingText] = useState(false)
+        const [inputText, setInputText] = useState('')
 
-                }
-        }
-        const [realX, changeRealX] = useState(0)
-        const [realY, changeRealY] = useState(0)
-        function mouseMove(event) {
 
-                removeFromRender(Name);
-                nowX = event.clientX;
-                nowY = event.clientY;
-                output = JSON.parse(JSON.stringify(addContent));
-                //气死我了为什么直接xx=yy是引用啊
-                output['id'] = Name;
-                output['x'] = nowX - getCanvasXY()['x'];
-                output['y'] = nowY - getCanvasXY()['y'];
-
-                if (addContent.hasOwnProperty('text')) {
-                        output['text'] = addContent['text'];
-                        data = {
-                                "nowX": nowX,
-                                "nowY": nowY
-                        };
-
-                        output['text'] = output['text'].replace(/\{(\w+)\}/g, (match, key) => data[key] || match);
-                        //寻找键值并替换
-                }
-                addToRender(
-                        output
-                )
-
-                props.onUpdateCanvas();
-
-        }
-
-        function addTest() {
-                Name = Date.now()
-                MouseDown = false
-                addEventListener("mousedown", mouseDown)
-                addEventListener("mouseup", mouseUp)
-                addEventListener("mousemove", mouseMove);
-
-        }
         useEffect(() => {
-                addEventListener("mousemove", (e) => {
-                        changeRealX(getCanvasXY()['x'] + e.clientX);
-                        changeRealY(getCanvasXY()['y'] + e.clientY)
-                })
-        },[])
-        
-
-        /*以下是关于加入的命令*/
-
-        function addPos() {
-
-                addContent = {
-                        'command': 'text',
-                        'text': '{nowX},{nowY}',
-                };
-                addTest()
-        }
-        const [isInputingText, changeInputingText] = useState(false);
-        const [InputedText, changeInputedText] = useState("");
-        function InputingText() {
-                if (isInputingText) {
-                        changeInputingText(false)
-                } else {
-                        changeInputingText(true)
+                const onMove = (e) => {
+                        setMouseX(getCanvasXY().x + e.clientX)
+                        setMouseY(getCanvasXY().y + e.clientY)
                 }
+                window.addEventListener('mousemove', onMove)
+                return () => window.removeEventListener('mousemove', onMove)
+        }, [])
+
+
+        const startAdd = (content) => {
+                nameRef.current = Date.now()
+                addContentRef.current = content
+                isAddingRef.current = true
         }
-        function addText() {
-                addContent = {
-                        'command': 'text',
-                        'text': InputedText,
-                };
-                addTest()
-                InputingText()
+
+        const handleMouseMove = (e) => {
+                if (!isAddingRef.current) return
+
+                removeFromRender(nameRef.current)
+
+                const x = e.clientX - getCanvasXY().x
+                const y = e.clientY - getCanvasXY().y
+
+                const output = {
+                        ...addContentRef.current,
+                        id: nameRef.current,
+                        x,
+                        y
+                }
+
+                if (output.text) {
+                        output.text = output.text.replace(/\{(\w+)\}/g, (_, k) =>
+                                ({ nowX: x, nowY: y }[k] ?? `{${k}}`)
+                        )
+                }
+
+                addToRender(output)
+                props.onUpdateCanvas()
         }
+
+        const stopAdd = () => {
+                isAddingRef.current = false
+                addContentRef.current = null
+        }
+
+        useEffect(() => {
+                window.addEventListener('mousemove', handleMouseMove)
+                window.addEventListener('mouseup', stopAdd)
+                return () => {
+                        window.removeEventListener('mousemove', handleMouseMove)
+                        window.removeEventListener('mouseup', stopAdd)
+                }
+        }, [])
+
+
+        const addPosText = () => {
+                startAdd({
+                        command: 'text',
+                        text: '{nowX},{nowY}'
+                })
+        }
+
+        const addCustomText = () => {
+                startAdd({
+                        command: 'text',
+                        text: inputText
+                })
+                setIsInputingText(false)
+                setInputText('')
+        }
+
         return (
-                <div className='tab-tab'>
-                        <img src={logo} className='tab-logo' onClick={() => {
-                                props.enableUI();
-                                props.showAbout();
-                        }} />
-                        <button
-                                className='tab-addTest'
-                                title='add Test'
-                                onClick={addPos}
-                        >添加鼠标坐标</button>
-                        {!isInputingText ?
+                <div className="tab-tab">
+                        <img
+                                src={logo}
+                                className="tab-logo"
+                                onMouseDown={e => e.stopPropagation()}
+                                onClick={() => {
+                                        props.enableUI()
+                                        props.showAbout()
+                                }}
+                        />
+
+                        <button className="tab-addTest" onClick={addPosText}>
+                                添加鼠标坐标
+                        </button>
+
+                        {!isInputingText ? (
                                 <button
-                                        className='tab-addTest'
-                                        title='add Test'
-                                        onClick={InputingText}
-                                >添加注解</button>
-                                :
+                                        className="tab-addTest"
+                                        onClick={() => setIsInputingText(true)}
+                                >
+                                        添加注解
+                                </button>
+                        ) : (
                                 <>
                                         <input
-                                                className='tab-Tabinput'
-                                                value={InputedText}
-                                                onChange={e => changeInputedText(e.target.value)}
+                                                className="tab-Tabinput"
+                                                value={inputText}
+                                                onChange={e => setInputText(e.target.value)}
                                         />
-                                        <button
-                                                className='tab-addTest'
-                                                title='add Test'
-                                                onClick={addText}
-                                        >添加</button>
+                                        <button className="tab-addTest" onClick={addCustomText}>
+                                                添加
+                                        </button>
                                 </>
+                        )}
 
-                        }
-                        <div style={{
-                                "display": "flex",
-                                "alignItems": "center"
-                        }}>
-                                
-                                        鼠标碰到:{!props.touching() == false ? props.touching() : "棍母"}
-                                        , 鼠标当前坐标:{realX},{realY}
-                                        ，鼠标选中:{returnSelectObject()["id"]}
-                                
+                        <div className="tab-info">
+                                鼠标坐标：{mouseX},{mouseY}，
+                                选中对象：{returnSelectObject()?.id ?? '无'}
                         </div>
 
-                        <div className='tab-tool'>
-                                <button className='tab-settings-button'
+                        <div className="tab-tool">
+                                <button
+                                        className="tab-settings-button"
                                         onClick={() => {
-                                                props.enableUI();
-                                                props.showSettings();
-
-                                        }}>
-                                        <img
-                                                src={settings}
-                                                width='20px'
-
-                                        />
+                                                props.enableUI()
+                                                props.showSettings()
+                                        }}
+                                >
+                                        <img src={settings} width="20" />
                                 </button>
-
                         </div>
                 </div>
         )

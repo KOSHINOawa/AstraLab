@@ -1,203 +1,220 @@
 import { useRef, useEffect, useState } from "react";
-import render, { getCtx } from './render.js'
-import '../values/ctx_content.js'
-import { addToRender, getRender, removeFromRender, isMouseTouchingAnything, getCanvasXY, setCanvasX, setCanvasY, mouseTouchObject, setSelectObject, changeCanvasSizeBy, returnCanvasSize } from "../values/ctx_content.js";
+import render from "./render.js";
+
+import {
+        addToRender,
+        getRender,
+        removeFromRender,
+        isMouseTouchingAnything,
+        getCanvasXY,
+        setCanvasX,
+        setCanvasY,
+        mouseTouchObject,
+        setSelectObject,
+        changeCanvasSizeBy,
+        returnCanvasSize
+} from "../values/ctx_content.js";
+
 import loadDefault from "../values/ctx_default.jsx";
-
-import Tab from '../components/tab/tab.jsx'
-import About from '../components/about/about.jsx'
-import Settings from '../components/settings/settings.jsx'
-import Properties from '../components/properties/properties.jsx'
-import '../components/properties/fix.js'
-
 import { getSetting } from "../values/settings.jsx";
 import { returnFix } from "../components/properties/fix.js";
+
+import Tab from "../components/tab/tab.jsx";
+import About from "../components/about/about.jsx";
+import Settings from "../components/settings/settings.jsx";
+import Properties from "../components/properties/properties.jsx";
 
 export default function Canvas() {
 
         const [isTouchingAnyObject, setTouchingAnyObject] = useState(false);
+        const [isShowAbout, setShowAbout] = useState(false);
+        const [isShowSettings, setShowSettings] = useState(false);
+        const [isOpeningUI, setOpenUI] = useState(false);
+        const [isOpeningProp, setOpenProp] = useState(false);
         const canvasRef = useRef(null);
-        const MouseX = useRef(0);
-        const MouseY = useRef(0);
-        let o_CanvasX = getCanvasXY()['x'] + MouseX
-        let o_CanvasY = getCanvasXY()['y'] + MouseY
+        const MousePos = useRef({ x: 0, y: 0 });
+        const CanvasOffset = useRef({
+                x: getCanvasXY().x,
+                y: getCanvasXY().y
+        });
+
+        const isMouseDown = useRef(false);
+        const isOpeningUIRef = useRef(false);
+        const isOpeningPropRef = useRef(false);
 
         function updateCanvas() {
                 render(canvasRef.current, getRender());
         }
-        const [windowSize, setWindowSize] = useState({
-                width: window.innerWidth,
-                height: window.innerHeight
-        });
-        useEffect(() => {
-                loadDefault();
-                updateCanvas()
-        }, []);
-        const [isShowAbout, changeAboutDisplay] = useState(false)
-        const [isShowSettings, changeSettingsDisplay] = useState(false)
-        const [isOpeningUI, setOpenUI] = useState(false)
-        const isOpeningUIRef = useRef(isOpeningUI);
+
+
         useEffect(() => {
                 isOpeningUIRef.current = isOpeningUI;
         }, [isOpeningUI]);
         useEffect(() => {
-                const handleResize = () => {
-                        setWindowSize({
-                                width: window.innerWidth,
-                                height: window.innerHeight
+                isOpeningPropRef.current = isOpeningProp;
+        },[isOpeningProp])
+
+        useEffect(() => {
+                loadDefault();
+                updateCanvas();
+        }, []);
+
+        function dragCanvas() {
+                if (isMouseTouchingAnything(MousePos.current.x, MousePos.current.y)) return;
+
+                const x = CanvasOffset.current.x + MousePos.current.x;
+                const y = CanvasOffset.current.y + MousePos.current.y;
+
+                setCanvasX(x);
+                setCanvasY(y);
+        }
+
+        function onMouseMove(e) {
+                MousePos.current.x = e.clientX;
+                MousePos.current.y = e.clientY;
+
+                const touching = isMouseTouchingAnything(
+                        MousePos.current.x,
+                        MousePos.current.y
+                );
+
+                setTouchingAnyObject(touching);
+                canvasRef.current.style.cursor = touching ? "pointer" : "move";
+
+                if (isMouseDown.current && !isOpeningUIRef.current) {
+                        dragCanvas();
+                }
+
+                updateCanvas();
+        }
+
+        function onMouseDown() {
+                if (isOpeningUIRef.current) return;
+                if (isOpeningPropRef.current){
+                        if (!(MousePos.current.x < window.innerWidth - 400)) return
+                }
+
+                isMouseDown.current = true;
+
+                if (!isMouseTouchingAnything(MousePos.current.x, MousePos.current.y)) {
+                        CanvasOffset.current.x = getCanvasXY().x - MousePos.current.x;
+                        CanvasOffset.current.y = getCanvasXY().y - MousePos.current.y;
+
+                        removeFromRender("选中框");
+                        setSelectObject({});
+                } else if (!returnFix()) {
+                        const obj = mouseTouchObject(MousePos.current.x, MousePos.current.y);
+                        setSelectObject(obj);
+                        removeFromRender("选中框");
+
+                        addToRender({
+                                id: "选中框",
+                                command: "stroke",
+                                x: (obj.command === "fill" ? obj.x[0] : obj.x) - 2,
+                                y:
+                                        (obj.command === "text"
+                                                ? obj.y - 50
+                                                : obj.command === "fill"
+                                                        ? obj.y[0]
+                                                        : obj.y) - 2,
+                                width:
+                                        (obj.command === "text"
+                                                ? obj.pxlong
+                                                : obj.command === "fill"
+                                                        ? obj.x[1] - obj.x[0]
+                                                        : obj.width) + 4,
+                                height:
+                                        (obj.command === "text"
+                                                ? 50
+                                                : obj.command === "fill"
+                                                        ? obj.y[1] - obj.y[0]
+                                                        : obj.height) + 4,
+                                color: "#33ccff"
                         });
-                };
-                const canvasEnter = () => {
-                        setTouchingAnyObject(isMouseTouchingAnything(
-                                MouseX.current,
-                                MouseY.current
-                        ))
-                        //直接用isTouchingAnyObject有问题，非常奇怪
-                        if (!isMouseTouchingAnything(
-                                MouseX.current,
-                                MouseY.current
-                        ) == false) {
-                                canvasRef.current.style.cursor = "pointer"
-                        } else {
-                                canvasRef.current.style.cursor = "move"
-                        }
-
                 }
-                canvasRef.current.addEventListener('mousemove', canvasEnter)
-                window.addEventListener('resize', handleResize);
-                window.addEventListener('mousemove', (event) => {
-                        MouseX.current = event.clientX;
-                        MouseY.current = event.clientY;
-                        updateCanvas()
-                }, 20);
 
-                window.addEventListener('resize', (event) => {
-                        updateCanvas()
-                });
-                function moveCanvas() {
-                        if (isMouseTouchingAnything(MouseX.current, MouseY.current) == false) {
-                                const changeX = (o_CanvasX + MouseX.current);
-                                const changeY = (o_CanvasY + MouseY.current)
-                                setCanvasX(changeX);
-                                setCanvasY(changeY);
-                                updateCanvas()
-                        } else {
-                                window.removeEventListener('mousedown', moveCanvas)
-                                return;
-                        }
+                updateCanvas();
+        }
 
-                }
-                function move_checkMouseUp() {
-                        window.removeEventListener('mousemove', moveCanvas);
-                        window.removeEventListener('mouseup', move_checkMouseUp);
-                }
-                function move_checkMouseDown() {
-                        if (isOpeningUIRef.current == false) {
-                                if (isMouseTouchingAnything(MouseX.current, MouseY.current) == false) {
-                                        o_CanvasX = getCanvasXY()['x'] - MouseX.current
-                                        o_CanvasY = getCanvasXY()['y'] - MouseY.current
-                                        window.addEventListener('mousemove', moveCanvas);
-                                        window.addEventListener('mouseup', move_checkMouseUp);
-                                        removeFromRender("选中框");
-                                        setSelectObject({});
-                                        updateCanvas()
-                                } else if (!returnFix()) { //碰到了啥
-                                        const touchObject = mouseTouchObject(MouseX.current, MouseY.current);
-                                        console.log(touchObject)
-                                        setSelectObject(touchObject);
-                                        //上传到ctx_content作为api读取↑
-                                        removeFromRender("选中框")
-                                        /*
-                                        ↑的“mouseTouchObject”函数是获取全部属性的，而isMouseTouchingAnything是获取它的id
-                                        详细请参考ctx_content.js
-                                        这里挺乱的，大致说一下：
-                                        对于填充（fill）因为它的值没width与height所以需要用它提供的x与y进行计算，
-                                        具体可以看render.js查询，我是照着做的。
-                                        文字的对齐是鼠标右上，这个“-50”是因为我设置的属性是50px的高
-                                        hmm，如果做可变高也可以？就是有点麻烦，要改挺多部分的
-                                        */
-                                        addToRender(
-                                                {
-                                                        "id": "选中框",
-                                                        "command": "stroke",
-                                                        "x": (touchObject["command"] == 'fill' ?
-                                                                touchObject['x'][0] : touchObject["x"]) - 2,
-                                                        "y":
-                                                                (touchObject['command'] == "text" ?
-                                                                        touchObject['y'] - 50 : touchObject["command"] == 'fill' ?
-                                                                                touchObject['y'][0] : touchObject['y']) - 2, //文字的对齐不一样
+        function onMouseUp() {
+                isMouseDown.current = false;
+        }
 
-                                                        "width": (touchObject['command'] == "text" ?
-                                                                touchObject["pxlong"] : touchObject['command'] == "fill" ?
-                                                                        touchObject['x'][1] - touchObject['x'][0] : touchObject["width"]) + 4,
+        function onWheel(e) {
+                if (isOpeningUIRef.current) return;
 
-                                                        "height": (touchObject['command'] == "text" ?
-                                                                50 : touchObject['command'] == "fill" ?
-                                                                        touchObject['y'][1] - touchObject['y'][0] : touchObject['height']) + 4
-                                                        ,
-                                                        "color": "#33ccff"
-                                                }
-                                        )
-                                        updateCanvas()
-                                }
-                        }
-                }
-                function canvasSize(e) {
-                        if (!isOpeningUIRef.current) {
-                                changeCanvasSizeBy(
-                                        e.deltaY * getSetting("canvas_oncechange_size") < 0 ?
-                                                returnCanvasSize() > 0.9 ?
-                                                        e.deltaY * getSetting("canvas_oncechange_size") : 0
-                                                : returnCanvasSize() < 4 ?
-                                                        e.deltaY * getSetting("canvas_oncechange_size") : 0
+                const delta = e.deltaY * getSetting("canvas_oncechange_size");
 
-                                ) //百分数
+                changeCanvasSizeBy(
+                        delta < 0
+                                ? returnCanvasSize() > 0.9 ? delta : 0
+                                : returnCanvasSize() < 4 ? delta : 0
+                );
 
-                                updateCanvas()
-                        }
-                }
-                window.addEventListener('mousedown', move_checkMouseDown)
-                window.addEventListener('wheel', (e) => canvasSize(e))
+                updateCanvas();
+        }
+
+        useEffect(() => {
+                window.addEventListener("mousemove", onMouseMove);
+                window.addEventListener("mousedown", onMouseDown);
+                window.addEventListener("mouseup", onMouseUp);
+                window.addEventListener("wheel", onWheel);
+
                 return () => {
-                        window.removeEventListener('resize', handleResize);
+                        window.removeEventListener("mousemove", onMouseMove);
+                        window.removeEventListener("mousedown", onMouseDown);
+                        window.removeEventListener("mouseup", onMouseUp);
+                        window.removeEventListener("wheel", onWheel);
                 };
         }, []);
+
 
         return (
                 <>
                         <Tab
-                                onUpdateCanvas={() => { updateCanvas() }}
-                                showAbout={() => { changeAboutDisplay(true) }}
-                                showSettings={() => { changeSettingsDisplay(true) }}
-                                touching={() =>
-                                        isTouchingAnyObject
-                                }
-                                enableUI={() => { setOpenUI(true) }}
-                                unableUI={() => { setOpenUI(false) }}
+                                touching={isTouchingAnyObject}
+                                onUpdateCanvas={updateCanvas}
+                                showAbout={() => setShowAbout(true)}
+                                showSettings={() => setShowSettings(true)}
+                                enableUI={() => setOpenUI(true)}
                         />
-                        {isShowAbout ? <About
-                                closeAbout={() => { changeAboutDisplay(false) }}
-                                unableUI={() => { setOpenUI(false) }}
-                        /> : null}
-                        {isShowSettings ? <Settings
-                                closeSettings={() => { changeSettingsDisplay(false) }}
-                                update={() => updateCanvas()}
-                                unableUI={() => { setOpenUI(false) }}
-                        /> : null}
+
+                        {isShowAbout && (
+                                <About
+                                        closeAbout={() => setShowAbout(false)}
+                                        unableUI={() => setOpenUI(false)}
+                                />
+                        )}
+
+                        {isShowSettings && (
+                                <Settings
+                                        closeSettings={() => setShowSettings(false)}
+                                        update={updateCanvas}
+                                        unableUI={() => setOpenUI(false)}
+                                />
+                        )}
+
                         <Properties
-                                NowMouseX={() => { return MouseX.current }}
-                                NowMouseY={() => { return MouseY.current }}
-                                enableUI={() => { setOpenUI(true) }}
-                                unableUI={() => { setOpenUI(false) }}
-                                onUpdateCanvas={() => { updateCanvas() }}
+                                NowMouseX={() => MousePos.current.x}
+                                NowMouseY={() => MousePos.current.y}
+                                isEnableProp={() => isOpeningUI}
+                                enableProp={() => setOpenProp(true)}
+                                unableProp={() => setOpenProp(false)}
+                                onUpdateCanvas={updateCanvas}
                         />
-                        <canvas className="main" ref={canvasRef} width={windowSize.width} height={windowSize.height} style={{
-                                position: "absolute",
-                                margin: 0,
-                                top: 0,
-                                left: 0,
-                                zIndex: -1
-                        }}
-                        /></>
+
+                        <canvas
+                                ref={canvasRef}
+                                className="main"
+                                width={window.innerWidth}
+                                height={window.innerHeight}
+                                style={{
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        zIndex: -1
+                                }}
+                        />
+                </>
         );
 }
