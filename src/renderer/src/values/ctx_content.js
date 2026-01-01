@@ -73,33 +73,38 @@ export function clearRender() {
 export function isMouseTouchingAnything(x, y) {
         const MouseX = x / canvasSize;
         const MouseY = y / canvasSize;
-        for (var i = 0; i < content.length; i++) {
-                switch (content[i]['command']) {
+        const contentNow = JSON.parse(JSON.stringify(content))
+        for (var i = 0; i < contentNow.length; i++) {
+                switch (contentNow[i]['command']) {
                         case 'fill':
                                 if (
-                                        content[i]['x'][0] + xy['x'] < MouseX &&
-                                        content[i]['y'][0] + xy['y'] < MouseY &&
-                                        content[i]['x'][1] + xy['x'] > MouseX &&
-                                        content[i]['y'][1] + xy['y'] > MouseY
-                                ) return content[i]['id'];
+                                        contentNow[i]['x'][0] + xy['x'] < MouseX &&
+                                        contentNow[i]['y'][0] + xy['y'] < MouseY &&
+                                        contentNow[i]['x'][1] + xy['x'] > MouseX &&
+                                        contentNow[i]['y'][1] + xy['y'] > MouseY
+                                ) return contentNow[i]['id'];
                                 break
                         case 'image':
                                 if (
-                                        content[i]['x'] + xy['x'] < MouseX &&
-                                        content[i]['y'] + xy['y'] < MouseY &&
-                                        content[i]['x'] + content[i]['width'] + xy['x'] > MouseX &&
-                                        content[i]['y'] + content[i]['height'] + xy['y'] > MouseY
-                                ) return content[i]['id'];
+                                        contentNow[i]['x'] + xy['x'] < MouseX &&
+                                        contentNow[i]['y'] + xy['y'] < MouseY &&
+                                        contentNow[i]['x'] + contentNow[i]['width'] + xy['x'] > MouseX &&
+                                        contentNow[i]['y'] + contentNow[i]['height'] + xy['y'] > MouseY
+                                ) return contentNow[i]['id'];
                                 break
                         case 'text':
-
+                                console.log(content[i]['id'], 
+                                        contentNow[i]['pxlong'] 
+                                )
                                 if (
-                                        content[i]['x'] + xy['x'] < MouseX &&
-                                        content[i]['y'] + xy['y'] - 50 < MouseY &&
-                                        content[i]['x'] + content[i]['pxlong'] + xy['x'] > MouseX &&
-                                        content[i]['y'] + xy['y'] > MouseY
+                                        contentNow[i]['x'] + xy['x'] < MouseX &&
+                                        contentNow[i]['y'] + xy['y'] - contentNow[i]['size'] < MouseY &&
+                                        contentNow[i]['x'] + contentNow[i]['pxlong'] + xy['x'] > MouseX &&
+                                        contentNow[i]['y'] + xy['y'] > MouseY
 
-                                ) return content[i]['id'];
+                                ) {
+                                        return contentNow[i]['id'];
+                                }
                                 break
                 }
 
@@ -131,7 +136,7 @@ export function mouseTouchObject(x, y) {
                         case 'text':
                                 if (
                                         content[i]['x'] + xy['x'] < MouseX &&
-                                        content[i]['y'] + xy['y'] - 50 < MouseY &&
+                                        content[i]['y'] + xy['y'] - content[i]['size'] < MouseY &&
                                         content[i]['x'] + content[i]['pxlong'] + xy['x'] > MouseX &&
                                         content[i]['y'] + xy['y'] > MouseY
 

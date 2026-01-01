@@ -1,29 +1,30 @@
-import Logo from "../image/logo.png"
-import { removeFromRender, addToRender } from '../values/ctx_content.js'
+import { removeFromRender, addToRender, getRender } from '../values/ctx_content.js'
+import { getImage } from '../values/imageLoader'
+
 
 export default function loadDefault() {
-        
+
         removeFromRender('矩形碰撞测试');
         removeFromRender('文字碰撞测试');
-
-
-
-        const img = new Image();
-        img.src = Logo;
-        img.onload = () => {
-                removeFromRender('图片碰撞测试');
-                addToRender(
-                        {
-                                "id": "图片碰撞测试",
-                                "command": "image",
-                                "image": img,
-                                "x": 0,
-                                "y": 0,
-                                "width": 100,
-                                "height": 100
+        removeFromRender('小文字碰撞测试');
+        removeFromRender('酒精灯');
+        addToRender(
+                {
+                        "id": "酒精灯",
+                        "thing": "酒精灯",
+                        "command": "image",
+                        "image": getImage('alcoholLamp'),
+                        "x": 0,
+                        "y": 350,
+                        "height": 200,
+                        "width": 200,
+                        "effect": {
+                                "fire": 0
                         }
-                )
-        }
+                }
+        )
+
+
         addToRender(
                 {
                         "id": "矩形碰撞测试",
@@ -39,9 +40,9 @@ export default function loadDefault() {
                         "command": "text",
                         "x": 0,
                         "y": 300,
+                        "size": 50,
                         "color": "#ffffff",
                         "text": "你好世界 Hello World 1234567890 !@#$%^ ！？，。"
                 }
         )
-        console.log(1)
 }

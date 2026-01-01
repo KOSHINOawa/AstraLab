@@ -51,7 +51,8 @@ export default function Tab(props) {
                         ...addContentRef.current,
                         id: nameRef.current,
                         x,
-                        y
+                        y,
+                        
                 }
 
                 if (output.text) {

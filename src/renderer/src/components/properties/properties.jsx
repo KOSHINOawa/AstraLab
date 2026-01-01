@@ -21,20 +21,19 @@ export default function Properties(props) {
                 props.onUpdateCanvas()
 
         }
-        useEffect(() => {
-                function checkSelect() {
-                        const checkValue = returnSelectObject()['id'] == undefined ? -400 : 0
-                        if (checkValue == -400 && props.isEnableProp) return
-                        if (returnSelectObject()['canChange'] != false && !fixProp) {
-                                props.unableProp()
-                                if (props.NowMouseX() < window.innerWidth - 400 || rightPosition == -400) { //Prop关闭的时候
-                                        props.enableProp()
-                                        setRightPosition(checkValue);
-                                        setSelectObjectProp(returnSelectObject())
-                                }
+        function checkSelect() {
+                const checkValue = returnSelectObject()['id'] == undefined ? -400 : 0
+                if (returnSelectObject()['canChange'] != false && !fixProp) {
+                        props.unableProp()
+                        
+                        if (props.NowMouseX() < window.innerWidth - 400 || rightPosition == -400) { //Prop关闭的时候
+                                props.enableProp()
+                                setRightPosition(checkValue);
+                                setSelectObjectProp(returnSelectObject())
                         }
-                };
-
+                }
+        };
+        useEffect(() => {
                 window.addEventListener('mousemove', checkSelect);
                 window.addEventListener('mousedown', checkSelect);
 
